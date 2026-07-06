@@ -11,13 +11,13 @@
       "id": "messaging-routing",
       "title": "Messaging And Routing",
       "path": "guides/messaging-routing.md",
-      "summary": "How to publish visible replies, wake actors, send private messages, and address scopes."
+      "summary": "How to publish visible replies, wake actors, avoid target fragmentation, send private messages, and address scopes."
     },
     {
       "id": "tasks-and-coordination",
       "title": "Tasks And Coordination",
       "path": "guides/tasks-and-coordination.md",
-      "summary": "Task ownership, rebasing, assignments, reminders, hidden state, and workflow progress."
+      "summary": "Task ownership, rebasing, assignments, reminders, hidden state, and ordered or simultaneous workflow progress."
     },
     {
       "id": "provider-integration",
