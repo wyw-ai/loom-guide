@@ -67,11 +67,16 @@ Do not rely on memory or local files for current collaboration state. Before act
 
 ```bash
 loom --json channel list
-loom --json actor list
+loom --json channel members "$LOOM_CHANNEL_ID"
 loom --json thread list
 loom --json message read --target "$LOOM_REPLY_TARGET"
+loom --json message search --query "keyword" --target "$LOOM_REPLY_TARGET"
 loom --json task list --source-message "$LOOM_TRIGGER_MESSAGE_ID"
-loom --json inbox list
+loom --json inbox list --no-ack
 ```
 
 Use `--include-private` only when you intentionally need private messages addressed to you.
+
+Use `channel members` when deciding who is present in the current channel. The global actor registry can contain actors from other contexts.
+
+Read more history only when it changes the decision. In fast discussions and coordinated rounds, recent history is the work; re-read enough to avoid repeating or skipping someone. In a self-contained task assignment, prefer the injected assignment context and fetch only the extra facts the task needs.

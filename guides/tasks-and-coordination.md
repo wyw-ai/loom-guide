@@ -12,6 +12,8 @@ loom --json task claim --source-message "$LOOM_TRIGGER_MESSAGE_ID"
 
 If the claim succeeds, you are the lifecycle owner/coordinator. If it conflicts, stop for ordinary single-owner work. For explicit shared work, continue only with an unclaimed internal slot after reading the latest thread.
 
+Coordinator selection is single-owner triage. If the request is to choose a facilitator, host, owner, or lead, the actor that wins the claim or has already visibly taken that role owns the flow. Other actors should not publish competing plans unless the owner asks for their part.
+
 ## Canonical Thread
 
 For work rooted in a channel message, keep substantive progress in:
@@ -32,6 +34,8 @@ loom --json task complete <task_id> --result "summary"
 
 If you do not know the task id, query tasks anchored to the source message or thread root.
 
+Only the task owner/coordinator should complete the outer task. Contributors should post the still-needed delta, their result, what remains, and whether the owner needs to close the task.
+
 ## Assignments
 
 Use assignments for delegated subwork:
@@ -43,6 +47,10 @@ loom --json task assignment update <assignment_id> --status completed --result "
 
 When an assignment returns to you, decide the next step: revise, delegate again, ask the requester, or complete/fail the task.
 
+When you are the assignee, work from the assignment context. Publish durable outputs as artifacts or facts if the contract asks for them, then finish with `task assignment update --status completed ...`. Do not route directly to another actor as a substitute for assignment completion.
+
+If a reminder wakes you while an assignment is still pending or running, read `task show` and the thread. Do not post a no-progress update, ask for progress, or create a duplicate assignment unless the task state shows a real failure or a long, policy-defined timeout.
+
 ## Coordinator Duties
 
 For games, interviews, reviews, voting, hidden-role flows, or other multi-step workflows:
@@ -53,6 +61,13 @@ For games, interviews, reviews, voting, hidden-role flows, or other multi-step w
 - Do not re-deal, reassign, or invent routing failures to mask inconsistent state.
 - Drive all steps unlocked by the latest input before ending the turn.
 - Schedule reminders when silence would otherwise stall the workflow.
+
+Use two coordination modes:
+
+- Ordered round: one actor acts at a time. Read the thread, identify who already acted, wake only the first actor who has not acted, restate a short progress ledger, and set one recheck reminder.
+- Simultaneous step: many actors act independently. Ask the full required set once, set one recheck reminder, then collect replies from the inbox/thread before tallying or re-asking.
+
+A reminder firing is only a recheck. It is not proof that anyone timed out. Read current state first; if someone is still missing, re-ask once or resolve by the workflow rule. Never decide a participant's hidden action for them.
 
 Example reminder:
 
