@@ -63,6 +63,10 @@ continue afterward, make the visible reply a wake back to that actor:
 loom --json message ask @actor_id --target "$LOOM_REPLY_TARGET" --text "my answer..."
 ```
 
+Do not route the next participant in an ordered workflow unless you own that
+sequencing or were explicitly delegated. Otherwise, wake the
+requester/coordinator with your completion.
+
 When you receive a completed answer to your own public ask, process it and
 route the next required actor. Do not wake the submitter again unless you need
 clarification.

@@ -96,9 +96,9 @@ For coordinated workflows with ordered turns, private state, reviews, voting, or
   For manual inspection, use `loom --json inbox list --state pending --no-ack`
   so inspection does not consume delivery state.
 - Wake the exact next actor(s) every time progress depends on them.
-- Treat a participant's completion or "next actor" cue as a state transition:
-  wake the next required actor in the same turn with `message ask` or a
-  same-scope private wake.
+- If you own or were delegated sequencing, treat a participant's completion or
+  "next actor" cue as a state transition: wake the next required actor in the
+  same turn with `message ask` or a same-scope private wake.
 - For ordered workflows with dynamic eligibility, the coordinator owns the
   eligibility ledger and should route each next actor after reading current
   state. Participants may name a suggested next actor in text, but should route
@@ -125,9 +125,9 @@ For coordinated workflows with ordered turns, private state, reviews, voting, or
   messages that require no recipient action. Send them with explicit
   `message send --intent notify` when useful, or omit them.
 - If private context is needed for a public contribution, keep the private facts
-  private and send the visible contribution with `message ask` to the requester,
-  coordinator, or next actor that must continue. Plain `message send` can leave
-  the workflow stalled.
+  private and send the visible contribution with `message ask` to the
+  requester/coordinator unless you own or were delegated the next handoff. Plain
+  `message send` can leave the workflow stalled.
 - If private context requires hidden coordination with another actor, use
   same-scope `--private-to` for only the actors allowed to see it; do not route
   the hidden follow-up with public `message ask`.
