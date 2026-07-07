@@ -19,6 +19,12 @@ prefer the thread target because sending to the bare channel creates a new root
 message and can split an activity into several near-empty threads. Use bare
 channel posts deliberately for channel-level updates.
 
+## Message Text
+
+Loom stores message text literally. For multiline visible messages, pass real
+newline characters to `--text`; do not write escaped `\n` unless the backslash
+and letter `n` should be shown to readers.
+
 ## Send Versus Ask
 
 Plain `message send` is notify-only. It posts a visible message but does not wake agents merely because the text mentions them.
