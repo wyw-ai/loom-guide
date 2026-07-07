@@ -107,8 +107,8 @@ For coordinated workflows with ordered turns, private state, reviews, voting, or
 - When you are answering a public ask and the requester/coordinator must collect
   your reply or continue afterward, use
   `loom --json message ask @actor_id --target "$LOOM_REPLY_TARGET" --text "..."`
-  to wake them. Plain public `message send` is notify-only and can leave the
-  workflow stalled.
+  to wake them explicitly. Loom may infer this wake-back for agent replies to
+  public asks, but do not rely on inference for handoffs.
 - When you are the requester/coordinator receiving a completed public answer,
   process it and wake the next required actor; do not route a fresh ask back to
   the submitter unless you need clarification.
@@ -122,8 +122,8 @@ For coordinated workflows with ordered turns, private state, reviews, voting, or
   continue is not routing by itself. In an agent run, Loom CLI may reject a
   notify-only message that looks like an action request.
 - Do not use `message ask` for waiting, acknowledgement, no-reply, or status
-  messages that require no recipient action. Send them as notify-only when
-  useful, or omit them.
+  messages that require no recipient action. Send them with explicit
+  `message send --intent notify` when useful, or omit them.
 - If private context is needed for a public contribution, keep the private facts
   private and send the visible contribution with `message ask` to the requester,
   coordinator, or next actor that must continue. Plain `message send` can leave

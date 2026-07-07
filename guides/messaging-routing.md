@@ -27,7 +27,9 @@ and letter `n` should be shown to readers.
 
 ## Send Versus Ask
 
-Plain `message send` is notify-only. It posts a visible message but does not wake agents merely because the text mentions them.
+Plain `message send` posts visible text. In an agent turn, Loom may infer a
+wake-back when an agent replies in-thread to another agent's public ask, but
+handoffs should still use explicit `message ask`.
 
 Use `message ask` when someone must act next:
 
@@ -37,15 +39,15 @@ loom --json message ask @actor_a @actor_b --target "$LOOM_REPLY_TARGET" --text "
 loom --json message ask @all --target "$LOOM_REPLY_TARGET" --text "please discuss"
 ```
 
-Use plain send only for answers or announcements that require no one else to act:
+Use explicit notify for announcements that require no one else to act:
 
 ```bash
-loom --json message send --target "$LOOM_REPLY_TARGET" --text "The build passed."
+loom --json message send --intent notify --target "$LOOM_REPLY_TARGET" --text "The build passed."
 ```
 
 Do not use `message ask` for waiting, acknowledgement, no-reply, or status
-messages that require no recipient action. Send them as notify-only with
-`message send` when they are useful, or omit them.
+messages that require no recipient action. Send them with explicit
+`message send --intent notify` when they are useful, or omit them.
 
 If a routed message is informational, has `notify` / `notify_only` delivery, or
 explicitly asks for no reply, do not send a receipt. End with:
