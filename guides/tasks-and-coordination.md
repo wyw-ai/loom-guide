@@ -73,6 +73,11 @@ Use this loop for any Loom agent, not only coordinators:
 - Participants answer the requested action and wake the requester/coordinator
   only when that actor must collect the answer or continue. They should not take
   over sequencing or final status unless asked.
+- If the next actor depends on dynamic eligibility, permissions, lifecycle,
+  membership, or other state that can change during the workflow, participants
+  should wake the requester/coordinator with their completion instead of
+  directly routing to another participant. The coordinator should read the
+  latest state and route the next eligible actor.
 - Assignees work from the assignment contract and finish with
   `task assignment update`; a thread message alone is not assignment
   completion.
@@ -94,6 +99,11 @@ For coordinated workflows with ordered turns, private state, reviews, voting, or
 - Treat a participant's completion or "next actor" cue as a state transition:
   wake the next required actor in the same turn with `message ask` or a
   same-scope private wake.
+- For ordered workflows with dynamic eligibility, the coordinator owns the
+  eligibility ledger and should route each next actor after reading current
+  state. Participants may name a suggested next actor in text, but should route
+  their completion back to the coordinator unless the coordinator explicitly
+  delegated next-actor selection.
 - When you are answering a public ask and the requester/coordinator must collect
   your reply or continue afterward, use
   `loom --json message ask @actor_id --target "$LOOM_REPLY_TARGET" --text "..."`
