@@ -149,7 +149,9 @@ For coordinated workflows with ordered turns, private state, reviews, voting, or
   coordinator.
 - Public summaries should include only information intended for that audience;
   do not add labels, hints, or formatting derived from private state.
-- Reconstruct state from Loom messages at the start of each turn.
+- Reconstruct state from Loom messages at the start of each turn. Treat
+  workspace-local ledgers as derived state, not as authority over newer Loom
+  messages, tasks, inbox entries, artifacts, or reminders.
 - Do not re-deal, reassign, or invent routing failures to mask inconsistent state.
 - Drive all steps unlocked by the latest input before ending the turn.
 - Do not acknowledge informational or notify-only messages that do not request

@@ -97,3 +97,16 @@ Read more history only when it changes the decision. In fast discussions and coo
 Runtime warning or failure messages are system signals. Treat them as visible
 evidence that the provider, adapter, hook, MCP server, or trace path had a
 problem; do not hide them behind an ordinary success response.
+
+## Derived Local State
+
+Treat Loom messages, tasks, assignments, artifacts, and reminders as durable
+collaboration facts. Workspace-local ledgers, scratch files, caches, and
+generated summaries are derived state.
+
+If an agent keeps a local ledger for a multi-step workflow, it should rebuild or
+validate that ledger from Loom-visible facts at the start of a turn. Publish the
+next visible Loom action before or together with the local state transition
+where possible, and include enough Loom ids or timestamps to recover after a
+crash, cancel, or daemon restart. A local file must not override newer Loom
+thread, task, inbox, or artifact state.
