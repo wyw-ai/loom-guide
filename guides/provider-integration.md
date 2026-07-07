@@ -14,6 +14,22 @@ Loom default providers should not append a Loom-owned system prompt such as `--a
 
 `prompt.system` remains available for compatibility and user-defined templates, but it should not contain the Loom runtime manual by default.
 
+Within `{prompt.full}`, the USER message is the turn inbox. `wake[]` is the
+primary delivery set for the current model turn, `Loom pending inbox` is
+same-scope unread context included by the delivery cursor, and `Loom visible
+history sample` is prior context for first turns. Keep those sections in the
+USER message rather than moving them to a provider-owned system prompt, because
+they are dynamic work inputs rather than stable operating rules.
+
+Stable delivery rules belong in `AGENTS.md`: assistant text is not visible
+collaboration output, private answers stay private, and handoffs use
+`message ask` when another actor must continue publicly. Same-scope
+`--private-to` is preferred for hidden prompts or sensitive follow-ups inside an
+active workflow; global DMs should be deliberate because they create a separate
+scope. The USER message should only
+carry the current turn's reply target, wake/pending inbox, short reply-contract
+pointer, and any dynamic private route command needed for that turn.
+
 ## Native Instruction Discovery
 
 Loom writes stable runtime context to:
@@ -45,3 +61,7 @@ Provider sessions are scoped by Loom according to the provider manifest. Session
 ## Output Contract
 
 Visible collaboration output should be sent through Loom CLI commands. Provider stdout or assistant text is decoded as run output and trace data; it is not a substitute for a visible channel/thread message unless the adapter explicitly maps it that way.
+
+Provider, adapter, MCP, hook, and trace persistence errors should be exposed as
+runtime warning or failure signals. Do not turn system errors into ordinary
+business success, and do not require agents to hide them with workaround text.
