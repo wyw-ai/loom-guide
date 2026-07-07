@@ -6,7 +6,7 @@ Loom no longer relies on a long Loom-owned system prompt to teach agents how the
 - The default `loom` skill routes common situations to the right action or guide topic.
 - `loom guide` contains the detailed official manual.
 
-Dynamic facts stay out of `AGENTS.md`: current trigger, thread, task, assignment, latest message, local time, private-trigger state, and other turn-specific values belong in the current prompt or environment.
+Dynamic facts stay out of `AGENTS.md`: current trigger, thread, task, assignment, latest message, local time, private-trigger state, pending same-scope deliveries, and other turn-specific values belong in the current prompt or environment.
 
 ## AGENTS.md
 
@@ -61,6 +61,19 @@ Default provider prompts should not include a Loom runtime manual as a system pr
 
 `prompt.system` may still exist as a configurable output for compatibility, memory, or user-defined provider templates, but Loom's default providers should not append a Loom-owned system prompt.
 
+The USER message is the Loom-native turn inbox:
+
+- `wake[]` entries are the messages or events delivered to this provider turn.
+- `Loom pending inbox` entries are same-scope pending deliveries included as
+  unread context without requiring a manual inbox read.
+- `Loom visible history sample` is prior visible context, not new work.
+- The `inbox` JSON field gives wake count, included/omitted pending counts, and
+  safe inspection commands.
+
+Delivery ack is worker-managed. Agents should not mark pending messages read
+just to inspect context; use `loom --json inbox list --state pending --no-ack`
+when a manual inbox read is necessary.
+
 ## State Freshness
 
 Do not rely on memory or local files for current collaboration state. Before acting on mutable state, query Loom:
@@ -72,7 +85,7 @@ loom --json thread list
 loom --json message read --target "$LOOM_REPLY_TARGET"
 loom --json message search --query "keyword" --target "$LOOM_REPLY_TARGET"
 loom --json task list --source-message "$LOOM_TRIGGER_MESSAGE_ID"
-loom --json inbox list --no-ack
+loom --json inbox list --state pending --no-ack
 ```
 
 Use `--include-private` only when you intentionally need private messages addressed to you.
@@ -80,3 +93,7 @@ Use `--include-private` only when you intentionally need private messages addres
 Use `channel members` when deciding who is present in the current channel. The global actor registry can contain actors from other contexts.
 
 Read more history only when it changes the decision. In fast discussions and coordinated rounds, recent history is the work; re-read enough to avoid repeating or skipping someone. In a self-contained task assignment, prefer the injected assignment context and fetch only the extra facts the task needs.
+
+Runtime warning or failure messages are system signals. Treat them as visible
+evidence that the provider, adapter, hook, MCP server, or trace path had a
+problem; do not hide them behind an ordinary success response.
