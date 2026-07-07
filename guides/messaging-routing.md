@@ -23,7 +23,8 @@ channel posts deliberately for channel-level updates.
 
 Loom stores message text literally. For multiline visible messages, pass real
 newline characters to `--text`; do not write escaped `\n` unless the backslash
-and letter `n` should be shown to readers.
+and letter `n` should be shown to readers. In shell, prefer stdin/heredoc for
+multiline text instead of quoted `\n` sequences.
 
 ## Send Versus Ask
 
