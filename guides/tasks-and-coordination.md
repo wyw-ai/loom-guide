@@ -108,6 +108,10 @@ For coordinated workflows with ordered turns, private state, reviews, voting, or
   For manual inspection, use `loom --json inbox list --state pending --no-ack`
   so inspection does not consume delivery state.
 - Wake the exact next actor(s) every time progress depends on them.
+- Before privately assigning work or starting parallel branches, publish the
+  non-private frame participants need: roles, rules, constraints, ordering, and
+  success or stop conditions. Keep hidden data private, but avoid making actors
+  infer shared rules from private instructions.
 - If you own or were delegated sequencing, treat a participant's completion or
   "next actor" cue as a state transition: wake the next required actor in the
   same turn with `message ask` or a same-scope private wake.
