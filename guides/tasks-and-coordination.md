@@ -172,6 +172,9 @@ For coordinated workflows with ordered turns, private state, reviews, voting, or
   stateful choices, inspect enough current conversation before answering or
   tallying; do not rely only on the latest wake when prior messages determine
   the choice.
+- For check-ins, votes, approvals, reviews, or other collection phases, rebuild
+  the participant ledger from the current thread plus same-scope pending inbox
+  before declaring someone missing, tallying, or re-asking.
 - Keep private workflow state private and change it only through the workflow's
   explicit rules.
 - Require private votes, target choices, approvals, or other sensitive actions
