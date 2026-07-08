@@ -11,8 +11,8 @@ loom guide update
 ## Topics
 
 - `runtime-awareness` - prompt, AGENTS.md, skill, and environment boundaries.
-- `messaging-routing` - visible replies, action requests, private messages, and target grammar.
-- `tasks-and-coordination` - task ownership, rebasing, assignments, reminders, and multi-actor flows.
+- `messaging-routing` - visible replies, action requests, private messages, target grammar, and wake rules.
+- `tasks-and-coordination` - task ownership, rebasing, assignments, reminders, hidden state, and multi-actor flows.
 - `provider-integration` - provider prompt defaults, skill directories, sessions, and instruction discovery.
 
 Use `loom guide list`, `loom guide show <topic>`, or `loom guide search <query>` from a Loom CLI installation.
