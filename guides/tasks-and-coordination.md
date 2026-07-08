@@ -15,6 +15,11 @@ Use the smallest native state surface that preserves recovery:
 - Use task facts, projections, and artifacts for recoverable state or evidence
   that may be needed after a restart. Do not store hidden/private workflow data
   there unless every task reader is allowed to see it.
+- For long-running coordinator workflows, keep a compact public progress
+  projection or fact when the public state changes: phase, remaining
+  participants, accepted decisions, next pending actor, and stop condition are
+  good candidates. Keep hidden choices, private assignments, and sensitive
+  details in private Loom messages.
 
 For a top-level channel message that represents work, claim the task before doing substantive work:
 
@@ -112,6 +117,9 @@ For coordinated workflows with ordered turns, private state, reviews, voting, or
   non-private frame participants need: roles, rules, constraints, ordering, and
   success or stop conditions. Keep hidden data private, but avoid making actors
   infer shared rules from private instructions.
+- When public progress must survive a restart or provider failure, update the
+  task projection or a task fact before or alongside the next handoff. Do not
+  force this for short handoffs or flows whose only durable state is private.
 - If you own or were delegated sequencing, treat a participant's completion or
   "next actor" cue as a state transition: wake the next required actor in the
   same turn with `message ask` or a same-scope private wake.
