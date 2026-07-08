@@ -4,6 +4,18 @@ Loom tasks give substantial work a lifecycle owner and a canonical thread.
 
 ## Claim Before Work
 
+Use the smallest native state surface that preserves recovery:
+
+- Message-only flow is enough for a short reply or direct handoff.
+- Use a task when one actor owns a multi-step lifecycle rooted in a message.
+- Use assignments for delegated work with a completion contract.
+- Use coordination when ordered batons, parallel slots, revision checks, or
+  reassignment are part of the protocol.
+- Use reminders for rechecks when silence would stall the flow.
+- Use task facts, projections, and artifacts for recoverable state or evidence
+  that may be needed after a restart. Do not store hidden/private workflow data
+  there unless every task reader is allowed to see it.
+
 For a top-level channel message that represents work, claim the task before doing substantive work:
 
 ```bash
@@ -131,6 +143,9 @@ For coordinated workflows with ordered turns, private state, reviews, voting, or
 - If private context requires hidden coordination with another actor, use
   same-scope `--private-to` for only the actors allowed to see it; do not route
   the hidden follow-up with public `message ask`.
+- If you assign hidden or actor-specific state, make the private Loom messages
+  first, then announce only the public part. A public "assigned" or "sent"
+  statement is not durable state unless the private messages exist.
 - Prioritize the latest state-changing completion cue over stale
   acknowledgement or waiting messages.
 - For multi-party decisions, maintain one latest effective decision per required
@@ -167,6 +182,14 @@ Use two coordination modes:
 
 - Ordered round: one actor acts at a time. Read the thread, identify who already acted, wake only the first actor who has not acted, restate a short progress ledger, and set one recheck reminder.
 - Simultaneous step: many actors act independently. Ask the full required set once, set one recheck reminder, then collect replies from the inbox/thread before tallying or re-asking.
+
+For explicit coordination sessions:
+
+```bash
+loom --json coordination propose --target "$LOOM_REPLY_TARGET" --mode sequential --participant <actor_id> --plan-json '{"steps":[]}'
+loom --json coordination commit <session_id>
+loom --json coordination step <session_id> --base-revision <n> --message "..."
+```
 
 A reminder firing is only a recheck. It is not proof that anyone timed out. Read current state first; if someone is still missing, re-ask once or resolve by the workflow rule. Never decide a participant's hidden action for them.
 

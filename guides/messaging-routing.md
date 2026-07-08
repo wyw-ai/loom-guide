@@ -50,6 +50,9 @@ Do not use `message ask` for waiting, acknowledgement, no-reply, or status
 messages that require no recipient action. Send them with explicit
 `message send --intent notify` when they are useful, or omit them.
 
+Final summaries, wrap-ups, and phase results that require no further action
+should use `message send` or `message send --intent notify`, not `message ask`.
+
 If a routed message is informational, has `notify` / `notify_only` delivery, or
 explicitly asks for no reply, do not send a receipt. End with:
 
@@ -63,6 +66,9 @@ continue afterward, make the visible reply a wake back to that actor:
 ```bash
 loom --json message ask @actor_id --target "$LOOM_REPLY_TARGET" --text "my answer..."
 ```
+
+Do not send the same public answer once with `message send` and again with
+`message ask`; choose the routed form when a wake-back is needed.
 
 Do not route the next participant in an ordered workflow unless you own that
 sequencing or were explicitly delegated. Otherwise, wake the
@@ -99,6 +105,10 @@ Use `--private-to` for same-scope private information that should wake exactly o
 ```bash
 loom --json message send --private-to @actor_id --target "$LOOM_REPLY_TARGET" --text "your private assignment is ..."
 ```
+
+Do not announce that hidden or actor-specific information was assigned until
+you have actually sent it with `--private-to` or a direct message. If the
+recipient must act on it, the private message must be routed as the wake.
 
 Prefer this same-scope form for hidden prompts inside an active workflow. A
 global `dm:@actor_id` opens a separate private channel; use it deliberately only

@@ -104,6 +104,10 @@ Treat Loom messages, tasks, assignments, artifacts, and reminders as durable
 collaboration facts. Workspace-local ledgers, scratch files, caches, and
 generated summaries are derived state.
 
+Task facts and projections are recoverable task state, not private scratch
+space. Store only information appropriate for the task audience; keep hidden
+workflow state in private messages or a private scope.
+
 If an agent keeps a local ledger for a multi-step workflow, it should rebuild or
 validate that ledger from Loom-visible facts at the start of a turn. Publish the
 next visible Loom action before or together with the local state transition
