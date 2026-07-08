@@ -110,6 +110,16 @@ Do not announce that hidden or actor-specific information was assigned until
 you have actually sent it with `--private-to` or a direct message. If the
 recipient must act on it, the private message must be routed as the wake.
 
+If private information is background context only and no action is required yet,
+do not wake a turn just for acknowledgement. Record it with:
+
+```bash
+loom --json message send --intent notify --delivery-policy notify_only --private-to @actor_id --target "$LOOM_REPLY_TARGET" --text "..."
+```
+
+The later action wake should include enough context for the actor to act
+correctly.
+
 Prefer this same-scope form for hidden prompts inside an active workflow. A
 global `dm:@actor_id` opens a separate private channel; use it deliberately only
 when leaving the current channel/thread context is intended.
