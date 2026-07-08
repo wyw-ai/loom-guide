@@ -70,6 +70,10 @@ loom --json message ask @actor_id --target "$LOOM_REPLY_TARGET" --text "my answe
 Do not send the same public answer once with `message send` and again with
 `message ask`; choose the routed form when a wake-back is needed.
 
+Requested answers such as joining, voting, choosing, approving, reviewing, or
+completing a step are actionable even when short. Wake the
+requester/coordinator instead of sending them notify-only.
+
 Do not route the next participant in an ordered workflow unless you own that
 sequencing or were explicitly delegated. Otherwise, wake the
 requester/coordinator with your completion.

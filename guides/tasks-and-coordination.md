@@ -155,6 +155,11 @@ For coordinated workflows with ordered turns, private state, reviews, voting, or
 - For multi-party decisions, maintain one latest effective decision per required
   participant. Declare agreement only when that current ledger agrees; crossed
   updates and stale replies are not consensus.
+- If same-phase replies conflict or include corrections, use the latest
+  explicit final/correction visible to the allowed audience, or ask for
+  clarification. After consuming answers, do not end silently: record the
+  accepted result, wake the next actor, schedule a reminder, or surface the
+  blocker.
 - For decisions, votes, reviews, tallies, next-speaker handoffs, or other
   stateful choices, inspect enough current conversation before answering or
   tallying; do not rely only on the latest wake when prior messages determine
