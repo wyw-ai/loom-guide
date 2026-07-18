@@ -182,10 +182,12 @@ Routing depends on delivery metadata, not prose:
 
 ## Retrying Message Creation
 
-When both the local CLI and connected server support message idempotency, use
-`--idempotency-key` if a timeout, disconnect, or lost response makes it unclear
-whether the first message was accepted. Retrying the unchanged logical message
-with the same stable key prevents a second message append:
+Ordinary message sends do not need `--idempotency-key`. It is an opt-in recovery
+tool for the unusual case where a timeout, disconnect, or lost response makes
+the first result unknown, the caller must replay the exact same logical
+message, and both the local CLI and connected server support message
+idempotency. In that case, reusing the same stable key prevents a second
+message append:
 
 ```bash
 loom --json message send \
