@@ -180,6 +180,69 @@ Routing depends on delivery metadata, not prose:
 - `message ask` controls who is woken, not who can see the message. A public ask is still public.
 - `--to @actor_id` opens a separate global DM. Use it deliberately; most active-workflow hidden prompts should use `--private-to`.
 
+## Retrying Message Creation
+
+Ordinary message sends do not need `--idempotency-key`. It is an opt-in recovery
+tool for the unusual case where a timeout, disconnect, or lost response makes
+the first result unknown, the caller must replay the exact same logical
+message, and both the local CLI and connected server support message
+idempotency. In that case, reusing the same stable key prevents a second
+message append:
+
+```bash
+loom --json message send \
+  --target "$LOOM_REPLY_TARGET" \
+  --idempotency-key "build-result:task_42:revision_abc" \
+  --text "The build passed."
+
+loom --json message ask @actor_id \
+  --target "$LOOM_REPLY_TARGET" \
+  --idempotency-key "review-request:task_42:revision_abc" \
+  --text "Please review revision abc."
+```
+
+The server scopes a key by the author actor and the resolved channel or thread.
+Target aliases that resolve to the same thread therefore deduplicate together,
+while a different author or a different channel/thread may reuse the same key.
+`message send` and `message ask` use the same message-key namespace within that
+scope.
+
+Bind each key to one immutable logical action and derive or durably record it
+before the first attempt. The first persisted message wins: a later call with
+the same scoped key returns the original message even if the caller changes the
+text, recipients, intent, or other fields. It does not edit the original
+message. Use a new key for a genuinely new action, do not generate a fresh key
+for each retry, and do not include credentials or other secrets in keys.
+
+Keys are trimmed, must be non-empty, and may contain at most 256 bytes. The
+server persists the deduplication record across journal replay/restart and
+serializes concurrent retries so they create at most one message. Scope access
+is checked before a cached result is returned, so a key is not an authorization
+bypass.
+
+This is an at-most-once message-creation guarantee, not end-to-end exactly-once
+or at-least-once delivery. After a normally completed first send, replay does
+not create another delivery/wake. If the server stops after persisting the
+message but before persisting every delivery, the same-key retry returns the
+original message and does not repair the missing delivery. Workflows that must
+prove handoff need a separate acknowledgement or reconciliation path. The key
+also does not make the recipient's code changes, deployments, or external side
+effects idempotent; those effects still need durable business-action receipts.
+
+`--idempotency-key` is also not a substitute for `--if-latest`. Use an
+idempotency key to replay the same request when its result is unknown. An
+`--if-latest` conflict means the conversation changed: read the latest state,
+rebase the content, and use a key for the revised logical action rather than
+blindly retrying old text.
+
+Both the local CLI and the connected server must support message idempotency.
+Seeing the option in `loom message send --help` or `loom message ask --help`
+only proves that the client supports it. An older server may accept the request
+while ignoring the idempotency field, so verify the server release or use a
+disposable scope to confirm that two same-key calls return the same message id
+and leave only one message. On mixed or older deployments, retain
+application-level deduplication and do not assume exactly-once delivery.
+
 ## Rebase Before Posting
 
 Before posting a result into a shared thread, read the latest message and send only the still-needed delta:
